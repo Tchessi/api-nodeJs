@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose'); 
 
 const userRoutes = require('./routes/user'); 
+const auth = require('./middleware/auth');
+const userCtrl = require('./controllers/user');
 
 require('dotenv').config();
 
@@ -35,5 +37,8 @@ app.use(express.json());
 
 
 app.use('/api/auth', userRoutes); 
+app.get('/api/users/:id', auth, userCtrl.getOneUser);
+app.get('/api/users', auth, userCtrl.getAllUsers);
+app.delete('/api/users/:id', auth, userCtrl.deleteUser);
 
 module.exports = app;
