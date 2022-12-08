@@ -41,10 +41,11 @@ app.use(express.json());
 
 app.use('/api/groups', groupRoutes);
 app.use('/api/groups/:id', auth, groupCtrl.getOnegroup);
-app.use('/api/groups', auth, groupCtrl.getAllgroups);
+app.get('/api/groups', auth, groupCtrl.getAllGroups);
 
 app.use('/api/auth', userRoutes); 
-app.get('/api/users/:id', auth, userCtrl.getOneUser);
+app.get('/api/user/:id', auth, userCtrl.getOneUser);
+app.put('/api/user/:id', auth, userCtrl.updateUser);
 app.get('/api/users', auth, userCtrl.getAllUsers);
 app.delete('/api/users/:id', auth, userCtrl.deleteUser);
 

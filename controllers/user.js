@@ -61,25 +61,42 @@ exports.login = (req, res) => {
 		.catch((error) => res.status(500).json({ error }));
 };
 
-exports.editUser = (req, res) => {
-	try {
-		const userObject = req.file
-			? {
-				...JSON.parse(req.body.user)
-			}
-			: { ...req.body };
+exports.updateUser = (req, res) => {
 
-		console.log(userObject);
-		req.user.update(userObject).then((user) => res.status(200).json({ user }));
-	} catch (error) {
-		res.status(400).json({ error });
+	if (!req.body) {
+		return res.status(400).send({
+			message: "Les données à mettre à jour ne peuvent pas être vides!"
+		});
 	}
+	const id = req.params.id;
+	User.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+		.then(data => {
+			if (!data) {
+				res.status(404).send({
+					message: `Impossible de mettre à jour l'utilisateur avec id=${id}. Peut-être que l'utilisateur n'a pas été trouvé!`
+				});
+			} else res.send({ message: "Utilisateur a été mis à jour avec succès!" });
+		})
+		.catch(err => {
+			res.status(500).send({
+				message: "Error updating user with id=" + id
+			});
+		});
 };
 
 exports.getOneUser = (req, res) => {
-	User.findOne({ where: { id: req.params.id } })
-		.then((user) => res.status(200).json({ user }))
-		.catch((error) => res.status(404).json({ error }));
+	const id = req.params.id;
+	User.findById(id)
+		.then(data => {
+			if (!data)
+				res.status(404).send({ message: "Utilisateur non trouvé avec id " + id });
+			else res.send(data);
+		})
+		.catch(err => {
+			res
+				.status(500)
+				.send({ message: "Erreur lors de la récupération de l'utilisateur avec l'identifiant=" + id });
+		});
 };
 
 exports.getAllUsers = (req, res) => {
@@ -94,13 +111,24 @@ exports.getAllUsers = (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
-	try {
-		const user = req.user.admin
-			? await User.findOne({ where: { id: req.params.id } })
-			: req.user;
-		await user.softDestroy();
-		res.status(200).json({ message: 'Utilisateur supprimé' });
-	} catch (error) {
-		res.status(400).json({ error });
-	}
+	const id = req.params.id;
+
+	User.findByIdAndRemove(id)
+		.then(data => {
+			if (!data) {
+				res.status(404).send({
+					message: `Utilisateur impossible avec id=${id}. Peut-être que l'utilisateur n'a pas été trouvé!`
+				});
+			} else {
+				res.send({
+					message: "Utilisateur supprimé avec succès!"
+				});
+			}
+		})
+		.catch(err => {
+			res.status(500).send({
+				message: "Impossible de supprimer avec l'id=" + id
+			});
+		});
+
 };
