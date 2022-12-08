@@ -5,8 +5,9 @@ require('dotenv').config();
 
 // Récupération du model User ,créer avec le schéma mongoose
 const User = require('../models/User');
+// const Group = require('../models/Group');
 
-exports.signup = (req, res, next) => {
+exports.signup = (req, res) => {
 	bcrypt
 		.hash(req.body.password, 10)
 		.then((hash) => {
@@ -82,7 +83,7 @@ exports.getOneUser = (req, res) => {
 };
 
 exports.getAllUsers = (req, res) => {
-	User.findAll()
+	User.find()
 		.then((users) => {
 			res.status(200).json({ users });
 		})
@@ -94,7 +95,7 @@ exports.getAllUsers = (req, res) => {
 
 exports.deleteUser = async (req, res) => {
 	try {
-		const user = req.user
+		const user = req.user.admin
 			? await User.findOne({ where: { id: req.params.id } })
 			: req.user;
 		await user.softDestroy();

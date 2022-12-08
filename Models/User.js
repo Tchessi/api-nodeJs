@@ -10,6 +10,9 @@ const userSchema = mongoose.Schema(
 	createdAt: { type: Date, default: Date.now()},
 	updatedAt: { type: Date, default: Date.now()},
 	password: { type: String, required: true },
+	// groupe:{
+	// 		type: mongoose.Schema.Types.ObjectId,
+	// 		ref: "group"},
 });
 
 userSchema.plugin(uniqueValidator);

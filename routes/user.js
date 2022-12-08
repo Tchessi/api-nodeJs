@@ -9,6 +9,8 @@ const auth = require('../middleware/auth')
 router.post('/signup', checkEmail, userCtrl.signup); 
 router.post('/login', userCtrl.login);
 router.put('/edit', auth, userCtrl.editUser);
+router.get('/', auth, userCtrl.getAllUsers);
+router.delete('/:id', auth, userCtrl.deleteUser);
 
 
 module.exports = router;

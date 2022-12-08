@@ -2,8 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose'); 
 
 const userRoutes = require('./routes/user'); 
+const groupRoutes = require('./routes/group');
+
 const auth = require('./middleware/auth');
 const userCtrl = require('./controllers/user');
+const groupCtrl = require('./controllers/group');
 
 require('dotenv').config();
 
@@ -13,6 +16,7 @@ mongoose
 		useNewUrlParser: true,
 		useUnifiedTopology: true,
 	})
+	
 	.then(() => console.log('Connexion à MongoDB réussie !'))
 	.catch(() => console.log('Connexion à MongoDB échouée !'));
 
@@ -28,13 +32,16 @@ app.use((req, res, next) => {
 	);
 	res.setHeader(
 		'Access-Control-Allow-Methods',
-		'GET, POST, PUT, DELETE, PATCH, OPTIONS'
+		'GET, group, PUT, DELETE, PATCH, OPTIONS'
 	);
 	next();
 });
 
 app.use(express.json()); 
 
+app.use('/api/groups', groupRoutes);
+app.use('/api/groups/:id', auth, groupCtrl.getOnegroup);
+app.use('/api/groups', auth, groupCtrl.getAllgroups);
 
 app.use('/api/auth', userRoutes); 
 app.get('/api/users/:id', auth, userCtrl.getOneUser);
