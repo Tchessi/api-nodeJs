@@ -45,12 +45,20 @@ exports.createGroup = (req, res) => {
 			});
 		});
 };
-exports.getOnegroup = (req, res) => {
-		Group.findOne({ where: { id: req.params.id } })
-			.then((group) => res.status(200).json({ group }))
-			.catch((error) => res.status(404).json({ error }));
+exports.getOneGroup = (req, res) => {
+	const id = req.params.id;
+	Group.findById(id)
+		.then(data => {
+			if (!data)
+				res.status(404).send({ message: "Group non trouvé avec id " + id });
+			else res.send(data);
+		})
+		.catch(err => {
+			res
+				.status(500)
+				.send({ message: "Erreur lors de la récupération D'un groupe avec l'identifiant=" + id });
+		});
 };
-
 exports.getAllGroups = (req, res) => {
 	Group.find()
 		.then((data) => {

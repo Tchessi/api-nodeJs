@@ -5,7 +5,7 @@ require('dotenv').config();
 
 // Récupération du model User ,créer avec le schéma mongoose
 const User = require('../models/User');
-// const Group = require('../models/Group');
+const Group = require('../models/Group');
 
 exports.signup = (req, res) => {
 	bcrypt
@@ -20,7 +20,7 @@ exports.signup = (req, res) => {
 				updatedAt: new Date(),
 				password: hash,
 			});
-
+			
 			// On enregistre l'utilisateur dans la base de données
 			user
 				.save()
@@ -30,7 +30,13 @@ exports.signup = (req, res) => {
 		.catch((error) => res.status(500).json({ error }));
 };
 
-
+// exports.addUserToGroup = function (userId, groupId) {
+// 	return User.findByIdAndUpdate(
+// 		userId,
+// 		{ group: groupId },
+// 		{ new: true, useFindAndModify: false }
+// 	);
+// };
 exports.login = (req, res) => {
 
 	User.findOne({ email: req.body.email })
